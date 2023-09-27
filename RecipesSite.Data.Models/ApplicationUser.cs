@@ -5,7 +5,9 @@
     {
         public ApplicationUser()
         {
-            this.SavedDishes=new HashSet<Dish>();
+            this.Id = Guid.NewGuid();
+
+            this.SavedDishes = new HashSet<Dish>();
         }
 
         public ICollection<Dish> SavedDishes { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RecipesSite.Web.Data;
 
@@ -11,9 +12,10 @@ using RecipesSite.Web.Data;
 namespace RecipesSite.Data.Migrations
 {
     [DbContext(typeof(RecipesDbContext))]
-    partial class RecipesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230927112438_SeedDb")]
+    partial class SeedDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

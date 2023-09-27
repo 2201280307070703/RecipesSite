@@ -19,6 +19,8 @@
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.ApplyConfiguration(new CategoryEntityConfiguration());
+
             builder.ApplyConfiguration(new DishEntityConfigoration());
 
             base.OnModelCreating(builder);
