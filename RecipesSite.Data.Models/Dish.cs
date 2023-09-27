@@ -38,6 +38,8 @@
 
         public int TotalLikesCount { get; set; }
 
+        public bool IsDeleted { get; set; }
+
         [ForeignKey(nameof(Category))]
         public int CategoryId { get; set; }
 
