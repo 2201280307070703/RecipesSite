@@ -1,9 +1,11 @@
 namespace RecipesSite.Web
 {
-    using Microsoft.Data.SqlClient;
     using Microsoft.EntityFrameworkCore;
     using RecipesSite.Data.Models;
     using RecipesSite.Web.Data;
+    using Infrastructure.Extensions;
+    using RecipeSite.Services.Contracts;
+
     public class Program
     {
         public static void Main(string[] args)
@@ -27,6 +29,8 @@ namespace RecipesSite.Web
             )
                 .AddEntityFrameworkStores<RecipesDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddServices(typeof(IDishService));
 
             WebApplication app = builder.Build();
 

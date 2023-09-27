@@ -1,18 +1,22 @@
 ﻿namespace RecipesSite.Web.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
+    using RecipeSite.Services.Contracts;
     using RecipesSite.Web.Models;
     using System.Diagnostics;
     public class HomeController : Controller
     {
-
-        public HomeController()
+        private readonly IDishService dishService;
+        public HomeController(IDishService dishService)
         {
+            this.dishService = dishService; 
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = await dishService.GetLastNineDishes();
+
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

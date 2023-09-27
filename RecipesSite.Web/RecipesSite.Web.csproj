@@ -16,8 +16,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RecipeSite.Services\RecipeSite.Services.csproj" />
     <ProjectReference Include="..\RecipesSite.Common\RecipesSite.Common.csproj" />
     <ProjectReference Include="..\RecipesSite.Data\RecipesSite.Data.csproj" />
+    <ProjectReference Include="..\RecipesSite.Web.Infrastructure\RecipesSite.Web.Infrastructure.csproj" />
+    <ProjectReference Include="..\RecipesSite.Web.viewModels\RecipesSite.Web.viewModels.csproj" />
   </ItemGroup>
 
 </Project>
