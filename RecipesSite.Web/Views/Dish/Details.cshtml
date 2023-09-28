@@ -1,0 +1,24 @@
+﻿@model DishDetailsViewModel
+
+@{
+    ViewData["Title"] = "How to be prepared";
+}
+
+<div class="row container">
+    <div class="card bg-dark text-danger col-6">
+        <img src="@Model.ImageUrl" class="card-img" alt="dish picture">
+        <div class="card-img-overlay">
+            <h3 class="card-title">@Model.CategoryName</h3>
+            <h4 class="card-text">Only for @Model.CookingTime Minutes!</h4>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card-body">
+            <h3 class="card-title mb-4 text-uppercase text-danger">@Model.Name</h3>
+            <p class="card-text">@Model.Description</p>
+            <p class="card-text"><span class="text-danger fw-bold">Products: </span>@Model.Ingredients</p>
+            <p class="card-text"><span class="text-danger fw-bold">Preparation steps: </span>@Model.PreparationSteps</p>
+            <p class="card-text text-muted">Rating: @Model.TotalLikesCount</p>
+        </div>
+    </div>
+</div>

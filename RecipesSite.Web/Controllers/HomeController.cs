@@ -4,7 +4,7 @@
     using RecipeSite.Services.Contracts;
     using RecipesSite.Web.Models;
     using System.Diagnostics;
-    using static RecipesSite.Common.NotificationMessageConstants;
+
     public class HomeController : Controller
     {
         private readonly IDishService dishService;
@@ -13,10 +13,11 @@
             this.dishService = dishService; 
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var model = await dishService.GetLastNineDishes();
-            this.TempData[SuccessMessage] = "Success";
+            var model = await dishService.GetLastNineDishesAsync();
+
             return View(model);
         }
 
