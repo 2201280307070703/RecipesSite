@@ -1,0 +1,47 @@
+﻿@model IEnumerable<DishDetailsViewModel>
+
+@{
+    ViewData["Title"] = "Recipes You Have Added";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+@if(Model.Any())
+{
+    <div class="row">
+        @foreach(var dish in Model)
+        {
+            <div class="card mb-3">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src=@dish.ImageUrl class="img-fluid rounded-start" alt="Dish Image">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">@dish.Name (@dish.CategoryName)</h5>
+                            <p class="card-text">@dish.Description</p>
+                            <p class="card-text">@dish.Ingredients</p>
+                            <p class="card-text">@dish.PreparationSteps</p>
+                            <p class="card-text">@dish.CookingTime</p>
+                            <p class="card-text"><small class="text-muted">@dish.TotalLikesCount</small></p>
+
+                            <a class="btn btn-warning" asp-controller="Dish" asp-action="Edit" asp-route-id="@dish.Id" role="button">Edit</a>
+                            <a class="btn btn-danger" asp-controller="Dish" asp-action="Delete" asp-route-id="@dish.Id" role="button">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <h1>You have no recipes added yet!</h1>
+    <p>Click <a asp-controller="Dish" asp-action="Add" class="tooltip-test">here</a> if you want to add</p>
+    
+}
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+}

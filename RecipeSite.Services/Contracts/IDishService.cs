@@ -13,5 +13,19 @@
         Task<bool> DishWithSameNameExistAsync(string name);
 
         Task<int> AddDishAsync(DishFormModel model, string userId);
+
+        Task<IEnumerable<DishDetailsViewModel>> GetAllDishesAddedByUserIdAsync(string userId);
+
+        Task<bool> IsUserOwnerOfThisRecipeByIdAsync(int recipeId,string userId);
+
+        Task<bool> DishExistByIdAsync(int id);
+
+        Task<DishDeleteViewModel> GetDishForDeleteByIdAsync(int id);
+
+        Task DeleteRecipeByIdAsync(int id);
+
+        Task<DishFormModel> GetDishForEditByIdAsync(int id);
+
+        Task<int> EditRecipeByIdAsync(int id, DishFormModel model);
     }
 }

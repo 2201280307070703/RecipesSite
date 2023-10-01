@@ -4,8 +4,6 @@
     using Microsoft.AspNetCore.Mvc;
     using RecipeSite.Services.Contracts;
     using RecipesSite.Web.viewModels.Dish;
-    using System.Security.Claims;
-    using System.Security.Cryptography.X509Certificates;
     using static RecipesSite.Common.NotificationMessageConstants;
 
     public class DishController : BaseController
@@ -71,6 +69,161 @@
                 var newDishId = await this.dishService.AddDishAsync(model, GetId());
 
                 return RedirectToAction("Details", "Dish", new { id = newDishId });
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> MyAdded()
+        {
+            try
+            {
+                var model = await this.dishService.GetAllDishesAddedByUserIdAsync(GetId());
+
+                return View(model);
+            }
+            catch (Exception) 
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            bool dishExists=await this.dishService.DishExistByIdAsync(id);
+
+            bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
+
+            if (!isUserOwnerOfRecipe)
+            {
+                this.TempData[ErrorMessage] = "This recipe is not yours and you can not delete it!";
+                return RedirectToAction("Dish", "MyAdded");
+            }
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                var model=await this.dishService.GetDishForDeleteByIdAsync(id);
+                return View(model);
+            }
+            catch(Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id, DishDeleteViewModel model)
+        {
+            bool dishExists = await this.dishService.DishExistByIdAsync(id);
+
+            bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
+
+            if (!isUserOwnerOfRecipe)
+            {
+                this.TempData[ErrorMessage] = "This recipe is not yours and you can not delete it!";
+                return RedirectToAction("Dish", "MyAdded");
+            }
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                await this.dishService.DeleteRecipeByIdAsync(id);
+
+
+                this.TempData[WarningMessage] = "Successfully deleted!";
+                return RedirectToAction("MyAdded", "Dish");
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            bool dishExists = await this.dishService.DishExistByIdAsync(id);
+
+            bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
+
+            if (!isUserOwnerOfRecipe)
+            {
+                this.TempData[ErrorMessage] = "This recipe is not yours and you can not edit it!";
+                return RedirectToAction("Dish", "MyAdded");
+            }
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+               var model= await this.dishService.GetDishForEditByIdAsync(id);
+
+                return View(model);
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, DishFormModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                model.Categories=await this.categoryService.GetAllCategoriesAsync();
+                return View(model);
+            }
+
+            bool dishExists = await this.dishService.DishExistByIdAsync(id);
+
+            bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
+
+            if (!isUserOwnerOfRecipe)
+            {
+                this.TempData[ErrorMessage] = "This recipe is not yours and you can not edit it!";
+                return RedirectToAction("Dish", "MyAdded");
+            }
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                int dishId=await this.dishService.EditRecipeByIdAsync(id, model);
+                return RedirectToAction("Details", "Dish" ,new {id= dishId});
             }
             catch (Exception)
             {

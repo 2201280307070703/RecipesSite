@@ -1,0 +1,15 @@
+﻿@model DishFormModel
+
+@{
+    ViewData["Title"] = "Edit Recipe";
+}
+
+<h2 class="text-center">@ViewData["Title"]</h2>
+<hr />
+
+<partial name="_DishFormPartial" model="@Model" />
+
+@section Scripts
+    {
+    <partial name="_ValidationScriptsPartial" />
+    }

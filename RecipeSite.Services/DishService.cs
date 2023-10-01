@@ -57,9 +57,59 @@
             return dish.Id;
         }
 
+        public async Task DeleteRecipeByIdAsync(int id)
+        {
+            Dish? dish = await this.dbContext.Dishes.FindAsync(id);
+
+            if (dish != null)
+            {
+                this.dbContext.Dishes.Remove(dish);
+
+                await this.dbContext.SaveChangesAsync();
+            }
+        }
+
+        public Task<bool> DishExistByIdAsync(int id)
+        {
+            return this.dbContext.Dishes.AnyAsync(d=>d.Id==id);
+        }
+
         public Task<bool> DishWithSameNameExistAsync(string name)
         {
             return this.dbContext.Dishes.AnyAsync(d=>d.Name == name);
+        }
+
+        public async Task<int> EditRecipeByIdAsync(int id, DishFormModel model)
+        {
+            Dish dish = await this.dbContext.Dishes.FirstAsync(d=>d.Id==id);
+
+            dish.Name = model.Name;
+            dish.ImageUrl = model.ImageUrl;
+            dish.Description = model.Description;
+            dish.Ingredients = model.Ingredients;
+            dish.PreparationSteps = model.PreparationSteps;
+            dish.CookingTime = model.CookingTime;
+            dish.CategoryId = model.CategoryId;
+
+            await this.dbContext.SaveChangesAsync();
+            return dish.Id;
+        }
+
+        public async Task<IEnumerable<DishDetailsViewModel>> GetAllDishesAddedByUserIdAsync(string userId)
+        {
+            return await this.dbContext.Dishes.Where(d => d.PostingUserId.ToString() == userId && d.IsDeleted==false)
+                .Select(d => new DishDetailsViewModel
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    ImageUrl = d.ImageUrl,
+                    Description = d.Description,
+                    Ingredients = d.Ingredients,
+                    PreparationSteps = d.PreparationSteps,
+                    CookingTime = d.CookingTime,
+                    TotalLikesCount = d.TotalLikesCount,
+                    CategoryName = d.Category.Name
+                }).ToListAsync();
         }
 
         public async Task<DishDetailsViewModel> GetDishDetailsAsync(int id)
@@ -67,7 +117,7 @@
             return await this.dbContext.Dishes.Where(d=>d.IsDeleted==false && d.Id==id)
                 .Select(d=>new DishDetailsViewModel()
                 {
-                    Id = id,
+                    Id = d.Id,
                     Name = d.Name,
                     ImageUrl = d.ImageUrl,
                     Description = d.Description,
@@ -77,6 +127,37 @@
                     TotalLikesCount = d.TotalLikesCount,
                     CategoryName=d.Category.Name
                 }).FirstAsync();
+        }
+
+        public async Task<DishDeleteViewModel> GetDishForDeleteByIdAsync(int id)
+        {
+            return await this.dbContext.Dishes.Where(d => d.Id == id)
+                .Select(d => new DishDeleteViewModel()
+                {
+                    Id= d.Id,
+                    Name = d.Name,
+                    Description = d.Description,
+                }).FirstAsync();
+
+        }
+
+        public async Task<DishFormModel> GetDishForEditByIdAsync(int id)
+        {
+            DishFormModel dishForEdit = await this.dbContext.Dishes.Where(d => d.Id == id)
+                .Select(d => new DishFormModel()
+                {
+                    Name = d.Name,
+                    ImageUrl = d.ImageUrl,
+                    Description =d.Description,
+                    Ingredients = d.Ingredients,
+                    PreparationSteps = d.PreparationSteps,
+                    CookingTime = d.CookingTime,
+                    CategoryId = d.CategoryId,
+                }).FirstAsync();
+
+            dishForEdit.Categories=await this.categoryService.GetAllCategoriesAsync();
+
+            return dishForEdit;
         }
 
         public async Task<DishFormModel> GetForAddAsync()
@@ -100,6 +181,13 @@
                     ImageUrl = d.ImageUrl
                 }).ToListAsync();
                 
+        }
+
+        public async Task<bool> IsUserOwnerOfThisRecipeByIdAsync(int recipeId, string userId)
+        {
+            Dish dish=await this.dbContext.Dishes.FirstAsync(d=>d.Id==recipeId);
+
+            return dish.PostingUserId.ToString() == userId;
         }
     }
 }
