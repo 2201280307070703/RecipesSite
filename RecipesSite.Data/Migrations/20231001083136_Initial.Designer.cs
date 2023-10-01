@@ -12,8 +12,8 @@ using RecipesSite.Web.Data;
 namespace RecipesSite.Data.Migrations
 {
     [DbContext(typeof(RecipesDbContext))]
-    [Migration("20230927112438_SeedDb")]
-    partial class SeedDb
+    [Migration("20231001083136_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -23,21 +23,6 @@ namespace RecipesSite.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
-
-            modelBuilder.Entity("ApplicationUserDish", b =>
-                {
-                    b.Property<int>("SavedDishesId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("UsersId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("SavedDishesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("ApplicationUserDish");
-                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<System.Guid>", b =>
                 {
@@ -256,33 +241,6 @@ namespace RecipesSite.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Pastry"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Desserts"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Starters"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Soups"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "Main Dishes"
-                        });
                 });
 
             modelBuilder.Entity("RecipesSite.Data.Models.Dish", b =>
@@ -324,6 +282,9 @@ namespace RecipesSite.Data.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
+                    b.Property<Guid>("PostingUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("PreparationSteps")
                         .IsRequired()
                         .HasMaxLength(400)
@@ -338,50 +299,24 @@ namespace RecipesSite.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Dishes");
+                    b.HasIndex("PostingUserId");
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 4,
-                            CookingTime = 60,
-                            Description = "This is very tasty and healthy soup!",
-                            ImageUrl = "https://media.istockphoto.com/id/1173599844/photo/mulligatawny-soup-with-naan.jpg?s=612x612&w=0&k=20&c=5eE4TJT_AG6CL-eoCohFMmTcGwOd_dH3tkTdbGX4nl0=",
-                            Ingredients = "Chicken, Potatoes, Fresh Herbs",
-                            IsDeleted = false,
-                            Name = "Chicken soup",
-                            PreparationSteps = "Place a large dutch oven or pot over medium high heat and add in oil. Once oil is hot, add in garlic, onion, carrots and celery and so on...",
-                            TotalLikesCount = 0
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            CookingTime = 120,
-                            Description = "This is very tasty and juicy cake. You will love it!",
-                            ImageUrl = "https://images.unsplash.com/photo-1588195538326-c5b1e9f80a1b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8Mnx8fGVufDB8fHx8fA%3D%3D&w=1000&q=80",
-                            Ingredients = "Sugar, Butter, Eggs, Baking powder,Milk",
-                            IsDeleted = false,
-                            Name = "Cake",
-                            PreparationSteps = "Place white sugar and butter into a mixing bowl. Beat with an electric mixer on medium speed until light and fluffy and so on...",
-                            TotalLikesCount = 0
-                        });
+                    b.ToTable("Dishes");
                 });
 
-            modelBuilder.Entity("ApplicationUserDish", b =>
+            modelBuilder.Entity("RecipesSite.Data.Models.UsersDishes", b =>
                 {
-                    b.HasOne("RecipesSite.Data.Models.Dish", null)
-                        .WithMany()
-                        .HasForeignKey("SavedDishesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasOne("RecipesSite.Data.Models.ApplicationUser", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "DishId");
+
+                    b.HasIndex("DishId");
+
+                    b.ToTable("UsersDishes");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -443,12 +378,51 @@ namespace RecipesSite.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("RecipesSite.Data.Models.ApplicationUser", "PostingUser")
+                        .WithMany("PostedDishes")
+                        .HasForeignKey("PostingUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Category");
+
+                    b.Navigation("PostingUser");
+                });
+
+            modelBuilder.Entity("RecipesSite.Data.Models.UsersDishes", b =>
+                {
+                    b.HasOne("RecipesSite.Data.Models.Dish", "Dish")
+                        .WithMany("UsersSaved")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RecipesSite.Data.Models.ApplicationUser", "User")
+                        .WithMany("SavedDishes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dish");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("RecipesSite.Data.Models.ApplicationUser", b =>
+                {
+                    b.Navigation("PostedDishes");
+
+                    b.Navigation("SavedDishes");
                 });
 
             modelBuilder.Entity("RecipesSite.Data.Models.Category", b =>
                 {
                     b.Navigation("Dishes");
+                });
+
+            modelBuilder.Entity("RecipesSite.Data.Models.Dish", b =>
+                {
+                    b.Navigation("UsersSaved");
                 });
 #pragma warning restore 612, 618
         }

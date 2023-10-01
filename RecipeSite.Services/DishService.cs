@@ -18,6 +18,50 @@
             this.categoryService = categoryService;
         }
 
+        public async Task<int> AddDishAsync(DishFormModel model)
+        {
+            Dish dish=new Dish()
+            {
+                Name = model.Name,
+                ImageUrl = model.ImageUrl,
+                Description = model.Description,
+                Ingredients = model.Ingredients,
+                PreparationSteps = model.PreparationSteps,
+                CookingTime = model.CookingTime,
+                CategoryId = model.CategoryId
+            };
+
+            await this.dbContext.Dishes.AddAsync(dish);
+            await this.dbContext.SaveChangesAsync();
+
+            return dish.Id;
+        }
+
+        public async Task<int> AddDishAsync(DishFormModel model, string userId)
+        {
+            Dish dish = new Dish()
+            {
+                Name=model.Name,
+                ImageUrl=model.ImageUrl,
+                Description = model.Description,
+                Ingredients=model.Ingredients,
+                PreparationSteps = model.PreparationSteps,
+                CookingTime=model.CookingTime,
+                CategoryId = model.CategoryId,
+                PostingUserId=Guid.Parse(userId)
+            };
+
+            await this.dbContext.Dishes.AddAsync (dish);
+            await this.dbContext.SaveChangesAsync();
+
+            return dish.Id;
+        }
+
+        public Task<bool> DishWithSameNameExistAsync(string name)
+        {
+            return this.dbContext.Dishes.AnyAsync(d=>d.Name == name);
+        }
+
         public async Task<DishDetailsViewModel> GetDishDetailsAsync(int id)
         {
             return await this.dbContext.Dishes.Where(d=>d.IsDeleted==false && d.Id==id)
@@ -39,7 +83,7 @@
         {
             DishFormModel model = new DishFormModel()
             {
-                Categories = await this.categoryService.GetAllCategoryNamesAsync()
+                Categories = await this.categoryService.GetAllCategoriesAsync()
             };
 
             return model;

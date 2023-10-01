@@ -4,6 +4,8 @@
 
     public interface ICategoryService
     {
-        Task<IEnumerable<CategoriesListViewModel>> GetAllCategoryNamesAsync();
+        Task<IEnumerable<CategoriesListViewModel>> GetAllCategoriesAsync();
+
+        Task<bool> CheckIfCategoryExistAsync(int categoryId);
     }
 }

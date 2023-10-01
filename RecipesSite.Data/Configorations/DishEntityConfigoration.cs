@@ -1,6 +1,7 @@
 ﻿namespace RecipesSite.Data.Configorations
 {
     using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Infrastructure;
     using Microsoft.EntityFrameworkCore.Metadata.Builders;
     using RecipesSite.Data.Models;
 
@@ -18,6 +19,11 @@
                 .HasForeignKey(d=>d.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne(d=>d.PostingUser)
+                .WithMany(u=>u.PostedDishes)
+                .HasForeignKey(d=>d.PostingUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             builder.HasData(this.GenerateDishes());
 
         }
@@ -31,13 +37,14 @@
             dish = new Dish()
             {
                 Id = 1,
-                Name="Chicken soup",
-                ImageUrl= "https://media.istockphoto.com/id/1173599844/photo/mulligatawny-soup-with-naan.jpg?s=612x612&w=0&k=20&c=5eE4TJT_AG6CL-eoCohFMmTcGwOd_dH3tkTdbGX4nl0=",
-                Description="This is very tasty and healthy soup!",
-                Ingredients= "Chicken, Potatoes, Fresh Herbs",
-                PreparationSteps= "Place a large dutch oven or pot over medium high heat and add in oil. Once oil is hot, add in garlic, onion, carrots and celery and so on...",
-                CookingTime=60,
-                CategoryId=4
+                Name = "Chicken soup",
+                ImageUrl = "https://media.istockphoto.com/id/1173599844/photo/mulligatawny-soup-with-naan.jpg?s=612x612&w=0&k=20&c=5eE4TJT_AG6CL-eoCohFMmTcGwOd_dH3tkTdbGX4nl0=",
+                Description = "This is very tasty and healthy soup!",
+                Ingredients = "Chicken, Potatoes, Fresh Herbs",
+                PreparationSteps = "Place a large dutch oven or pot over medium high heat and add in oil. Once oil is hot, add in garlic, onion, carrots and celery and so on...",
+                CookingTime = 60,
+                CategoryId = 4,
+                PostingUserId = Guid.Parse("002FB053-A163-427B-97D7-1E679987145C")
             };
 
             dishes.Add(dish);
@@ -51,7 +58,8 @@
                 Ingredients = "Sugar, Butter, Eggs, Baking powder,Milk",
                 PreparationSteps = "Place white sugar and butter into a mixing bowl. Beat with an electric mixer on medium speed until light and fluffy and so on...",
                 CookingTime = 120,
-                CategoryId = 2
+                CategoryId = 2,
+                PostingUserId = Guid.Parse("002FB053-A163-427B-97D7-1E679987145C")
             };
 
             dishes.Add(dish);

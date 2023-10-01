@@ -8,7 +8,7 @@
     {
         public Dish()
         {
-            this.Users=new HashSet<ApplicationUser>();
+            this.UsersSaved = new HashSet<UsersDishes>();
         }
 
         [Key]
@@ -45,6 +45,11 @@
 
         public virtual Category Category { get; set; } = null!;
 
-        public ICollection<ApplicationUser> Users { get; set; }
+        [ForeignKey(nameof(PostingUser))]
+        public Guid PostingUserId { get; set; }
+
+        public ApplicationUser PostingUser { get; set; } = null!;
+
+        public ICollection<UsersDishes> UsersSaved { get; set; }
     }
 }

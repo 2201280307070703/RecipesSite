@@ -1,15 +1,21 @@
 ﻿namespace RecipesSite.Data.Models
 {
     using Microsoft.AspNetCore.Identity;
+    using System.ComponentModel.DataAnnotations.Schema;
+
     public class ApplicationUser:IdentityUser<Guid>
     {
         public ApplicationUser()
         {
             this.Id = Guid.NewGuid();
 
-            this.SavedDishes = new HashSet<Dish>();
+            this.SavedDishes = new HashSet<UsersDishes>();
+            this.PostedDishes = new HashSet<Dish>();
         }
 
-        public ICollection<Dish> SavedDishes { get; set; }
+        [InverseProperty("PostingUser")]
+        public ICollection<Dish> PostedDishes { get; set; }
+
+        public ICollection<UsersDishes> SavedDishes { get; set; }
     }
 }

@@ -17,11 +17,15 @@
 
         public DbSet<Dish> Dishes { get; set; } = null!;
 
+        public DbSet<UsersDishes> UsersDishes { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.ApplyConfiguration(new CategoryEntityConfiguration());
 
             builder.ApplyConfiguration(new DishEntityConfigoration());
+
+            builder.ApplyConfiguration(new UsersDishesConfiguration());
 
             base.OnModelCreating(builder);
         }

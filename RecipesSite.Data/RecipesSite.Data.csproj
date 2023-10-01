@@ -20,4 +20,8 @@
     <ProjectReference Include="..\RecipesSite.Data.Models\RecipesSite.Data.Models.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

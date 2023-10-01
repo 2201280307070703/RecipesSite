@@ -1,10 +1,9 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-#nullable disable
+﻿#nullable disable
 
 namespace RecipesSite.Data.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -179,13 +178,20 @@ namespace RecipesSite.Data.Migrations
                     Ingredients = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     PreparationSteps = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: false),
                     CookingTime = table.Column<int>(type: "int", nullable: false),
-                    TotalLikesCount = table.Column<int>(type: "int", nullable: false),
+                    TotalLikesCount = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    PostingUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Dishes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Dishes_AspNetUsers_PostingUserId",
+                        column: x => x.PostingUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Dishes_Categories_CategoryId",
                         column: x => x.CategoryId,
@@ -195,33 +201,28 @@ namespace RecipesSite.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ApplicationUserDish",
+                name: "UsersDishes",
                 columns: table => new
                 {
-                    SavedDishesId = table.Column<int>(type: "int", nullable: false),
-                    UsersId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DishId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ApplicationUserDish", x => new { x.SavedDishesId, x.UsersId });
+                    table.PrimaryKey("PK_UsersDishes", x => new { x.UserId, x.DishId });
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDish_AspNetUsers_UsersId",
-                        column: x => x.UsersId,
+                        name: "FK_UsersDishes_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ApplicationUserDish_Dishes_SavedDishesId",
-                        column: x => x.SavedDishesId,
+                        name: "FK_UsersDishes_Dishes_DishId",
+                        column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ApplicationUserDish_UsersId",
-                table: "ApplicationUserDish",
-                column: "UsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -266,13 +267,20 @@ namespace RecipesSite.Data.Migrations
                 name: "IX_Dishes_CategoryId",
                 table: "Dishes",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dishes_PostingUserId",
+                table: "Dishes",
+                column: "PostingUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UsersDishes_DishId",
+                table: "UsersDishes",
+                column: "DishId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ApplicationUserDish");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -289,10 +297,13 @@ namespace RecipesSite.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Dishes");
+                name: "UsersDishes");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "Dishes");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");

@@ -9,5 +9,9 @@
         Task<DishDetailsViewModel> GetDishDetailsAsync(int id);
 
         Task<DishFormModel> GetForAddAsync();
+
+        Task<bool> DishWithSameNameExistAsync(string name);
+
+        Task<int> AddDishAsync(DishFormModel model, string userId);
     }
 }

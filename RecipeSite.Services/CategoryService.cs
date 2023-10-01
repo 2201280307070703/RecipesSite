@@ -14,7 +14,12 @@
             this.dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<CategoriesListViewModel>> GetAllCategoryNamesAsync()
+        public async Task<bool> CheckIfCategoryExistAsync(int categoryId)
+        {
+            return await this.dbContext.Categories.AnyAsync(c=>c.Id == categoryId);
+        }
+
+        public async Task<IEnumerable<CategoriesListViewModel>> GetAllCategoriesAsync()
         {
             return await this.dbContext.Categories
                  .Select(c => new CategoriesListViewModel()
