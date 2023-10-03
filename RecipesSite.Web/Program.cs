@@ -5,6 +5,7 @@ namespace RecipesSite.Web
     using RecipesSite.Web.Data;
     using Infrastructure.Extensions;
     using RecipeSite.Services.Contracts;
+    using Microsoft.AspNetCore.Mvc;
 
     public class Program
     {
@@ -28,7 +29,11 @@ namespace RecipesSite.Web
             }
             )
                 .AddEntityFrameworkStores<RecipesDbContext>();
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews()
+                .AddMvcOptions(options =>
+                {
+                    options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+                });
 
             builder.Services.AddServices(typeof(IDishService));
 
