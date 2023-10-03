@@ -2,8 +2,6 @@
 {
     using Microsoft.AspNetCore.Mvc;
     using RecipeSite.Services.Contracts;
-    using RecipesSite.Web.Models;
-    using System.Diagnostics;
 
     public class HomeController : Controller
     {
@@ -22,9 +20,14 @@
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int statusCode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (statusCode == 404)
+            {
+                return View("Error404");
+            }
+
+            return View();
         }
     }
 }
