@@ -19,6 +19,11 @@
             <p class="card-text"><span class="text-danger fw-bold">Products: </span>@Model.Ingredients</p>
             <p class="card-text"><span class="text-danger fw-bold">Preparation steps: </span>@Model.PreparationSteps</p>
             <p class="card-text text-muted">Rating: @Model.TotalLikesCount</p>
+            @if(User.Identity?.IsAuthenticated ?? false)
+            {
+                <a asp-controller="Dish" asp-action="Save" asp-route-id="@Model.Id"  class="btn btn-warning">Save</a>
+                <button type="submit" class="btn btn-primary">Like</button>
+            }
         </div>
     </div>
 </div>

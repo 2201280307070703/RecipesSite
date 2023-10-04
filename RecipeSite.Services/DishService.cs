@@ -59,29 +59,26 @@
 
         public async Task DeleteRecipeByIdAsync(int id)
         {
-            Dish? dish = await this.dbContext.Dishes.FindAsync(id);
+            Dish dish = await this.dbContext.Dishes.Where(d => d.Id == id).FirstAsync();
 
-            if (dish != null)
-            {
-                this.dbContext.Dishes.Remove(dish);
+            dish.IsDeleted = true;
 
-                await this.dbContext.SaveChangesAsync();
-            }
+            await this.dbContext.SaveChangesAsync();
         }
 
         public Task<bool> DishExistByIdAsync(int id)
         {
-            return this.dbContext.Dishes.AnyAsync(d=>d.Id==id);
+            return this.dbContext.Dishes.AnyAsync(d=>d.Id==id && d.IsDeleted==false);
         }
 
         public Task<bool> DishWithSameNameExistAsync(string name)
         {
-            return this.dbContext.Dishes.AnyAsync(d=>d.Name == name);
+            return this.dbContext.Dishes.AnyAsync(d=>d.Name == name && d.IsDeleted == false);
         }
 
         public async Task<int> EditRecipeByIdAsync(int id, DishFormModel model)
         {
-            Dish dish = await this.dbContext.Dishes.FirstAsync(d=>d.Id==id);
+            Dish dish = await this.dbContext.Dishes.FirstAsync(d=>d.Id==id && d.IsDeleted == false);
 
             dish.Name = model.Name;
             dish.ImageUrl = model.ImageUrl;
@@ -131,7 +128,7 @@
 
         public async Task<DishDeleteViewModel> GetDishForDeleteByIdAsync(int id)
         {
-            return await this.dbContext.Dishes.Where(d => d.Id == id)
+            return await this.dbContext.Dishes.Where(d => d.Id == id && d.IsDeleted == false)
                 .Select(d => new DishDeleteViewModel()
                 {
                     Id= d.Id,
@@ -143,7 +140,7 @@
 
         public async Task<DishFormModel> GetDishForEditByIdAsync(int id)
         {
-            DishFormModel dishForEdit = await this.dbContext.Dishes.Where(d => d.Id == id)
+            DishFormModel dishForEdit = await this.dbContext.Dishes.Where(d => d.Id == id && d.IsDeleted == false)
                 .Select(d => new DishFormModel()
                 {
                     Name = d.Name,
@@ -185,9 +182,38 @@
 
         public async Task<bool> IsUserOwnerOfThisRecipeByIdAsync(int recipeId, string userId)
         {
-            Dish dish=await this.dbContext.Dishes.FirstAsync(d=>d.Id==recipeId);
+            Dish dish=await this.dbContext.Dishes.FirstAsync(d=>d.Id==recipeId && d.IsDeleted == false);
 
             return dish.PostingUserId.ToString() == userId;
+        }
+
+        public async Task SaveRecipeAsync(string userId, int dishId)
+        {
+            UsersDishes usersDishes=new UsersDishes()
+            {
+                UserId=Guid.Parse(userId),
+                DishId=dishId
+            };
+
+            await this.dbContext.UsersDishes.AddAsync(usersDishes);
+            await this.dbContext.SaveChangesAsync();
+        }
+
+        public async Task<IEnumerable<IndexViewModel>> TakeAllSavedDishesByUserIdAsync(string userId)
+        {
+            return  await this.dbContext.UsersDishes.Where(ud => ud.UserId.ToString() == userId && ud.Dish.IsDeleted==false)
+                .Select(ud => new IndexViewModel()
+                {
+                    Id=ud.DishId,
+                    Name=ud.Dish.Name,
+                    Description=ud.Dish.Description,
+                    ImageUrl=ud.Dish.ImageUrl
+                }).ToListAsync();
+        }
+
+        public async Task<bool> UserAlreadyHasThisRecipeInSavedDishesCollectionAsync(string userId, int dishId)
+        {
+            return await this.dbContext.UsersDishes.AnyAsync(ud=>ud.UserId.ToString()==userId && ud.DishId==dishId && ud.Dish.IsDeleted == false);
         }
     }
 }

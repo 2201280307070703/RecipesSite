@@ -232,5 +232,44 @@
                 return RedirectToAction("Index", "Home");
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Save(int id)
+        {
+            bool dishExists = await this.dishService.DishExistByIdAsync(id);
+            bool dishIsAlreadyInSavedDishesCollection = await this.dishService.UserAlreadyHasThisRecipeInSavedDishesCollectionAsync(GetId(), id);
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            if (dishIsAlreadyInSavedDishesCollection)
+            {
+                this.TempData[ErrorMessage] = "This recipe is already saved in your collection";
+                return RedirectToAction("Saved", "Dish");
+            }
+
+            try
+            {
+                await this.dishService.SaveRecipeAsync(GetId(), id);
+                return RedirectToAction("Saved", "Dish");
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Saved()
+        {
+            var model = await this.dishService.TakeAllSavedDishesByUserIdAsync(GetId());
+
+            return View(model);
+        }
     }
 }

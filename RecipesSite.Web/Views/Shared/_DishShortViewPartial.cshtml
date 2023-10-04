@@ -1,0 +1,14 @@
+﻿@model IEnumerable<IndexViewModel>
+@foreach(var dish in Model)
+{
+    <div class="col-3 m-1 align-self-center">
+        <div class="card">
+            <img src="@dish.ImageUrl" class="card-img-top" alt="dish picture">
+            <div class="card-body">
+                <h5 class="card-title">@dish.Name</h5>
+                <p class="card-text">@dish.Description</p>
+                <a asp-controller="Dish" asp-action="Details" asp-route-id="@dish.Id" class="btn btn-success">View Recipe</a>
+            </div>
+        </div>
+    </div>
+}

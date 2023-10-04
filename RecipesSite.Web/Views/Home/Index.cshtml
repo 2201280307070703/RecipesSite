@@ -3,18 +3,16 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="row">
-    @foreach(var dish in Model)
-    {
-        <div class="col-3 m-1 align-self-center">
-             <div class="card">
-                 <img src="@dish.ImageUrl" class="card-img-top" alt="dish picture">
-                 <div class="card-body">
-                    <h5 class="card-title">@dish.Name</h5>
-                     <p class="card-text">@dish.Description</p>
-                     <a asp-controller="Dish" asp-action="Details" asp-route-id="@dish.Id" class="btn btn-success">View Recipe</a>
-                 </div>
-            </div>
-        </div>
-    }
-</div>
+@if (Model.Any())
+{
+    <div class="row">
+        <partial name="_DishShortViewPartial" model="@Model" />
+    </div>
+}
+else
+{
+    <div class="container">
+        <h1 class="text-danger">There are no recipes. Why don't you add some? </h1>
+        <p>Click <a class="text-danger" asp-controller="Dish" asp-action="Add">Here</a> and add your first recipe!</p>
+    </div>
+}
