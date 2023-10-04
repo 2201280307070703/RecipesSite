@@ -34,5 +34,9 @@
         Task SaveRecipeAsync(string userId, int dishId);
 
         Task<IEnumerable<IndexViewModel>> TakeAllSavedDishesByUserIdAsync(string userId);
+
+        Task IncreaseLikesCountByIdAsync(int id);
+
+        Task<IEnumerable<IndexViewModel>> TakeTopTenDishesAsync();
     }
 }

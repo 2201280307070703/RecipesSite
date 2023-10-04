@@ -237,7 +237,10 @@
         public async Task<IActionResult> Save(int id)
         {
             bool dishExists = await this.dishService.DishExistByIdAsync(id);
+
             bool dishIsAlreadyInSavedDishesCollection = await this.dishService.UserAlreadyHasThisRecipeInSavedDishesCollectionAsync(GetId(), id);
+
+            bool userIsOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
 
             if (!dishExists)
             {
@@ -249,6 +252,12 @@
             {
                 this.TempData[ErrorMessage] = "This recipe is already saved in your collection";
                 return RedirectToAction("Saved", "Dish");
+            }
+
+            if (userIsOwnerOfRecipe)
+            {
+                this.TempData[ErrorMessage] = "You are the author of this recipe. You can not save it!";
+                return RedirectToAction("MyAdded", "Dish");
             }
 
             try
@@ -268,6 +277,41 @@
         public async Task<IActionResult> Saved()
         {
             var model = await this.dishService.TakeAllSavedDishesByUserIdAsync(GetId());
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Like(int id)
+        {
+            bool dishExists = await this.dishService.DishExistByIdAsync(id);
+
+            if (!dishExists)
+            {
+                this.TempData[ErrorMessage] = "This recipe do not exist!";
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                await this.dishService.IncreaseLikesCountByIdAsync(id);
+
+                return RedirectToAction("Details", "Dish", new {id=id});
+            }
+            catch (Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> MostRated()
+        {
+            var model = await this.dishService.TakeTopTenDishesAsync();
 
             return View(model);
         }

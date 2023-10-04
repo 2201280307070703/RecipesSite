@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<IndexViewModel>
 @{
-    ViewData["Title"] = "Saved Recipes";
+    ViewData["Title"] = "Most Rated Dishes";
 }
 
 @if (Model.Any())
@@ -11,7 +11,5 @@
 }
 else
 {
-    <div class="container">
-        <h1>There are no saved recipes.</h1>
-    </div>
+        <h1 class="text-danger">There are no recipes.</h1>
 }

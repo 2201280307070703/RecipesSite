@@ -180,6 +180,15 @@
                 
         }
 
+        public async Task IncreaseLikesCountByIdAsync(int id)
+        {
+            Dish dish=await this.dbContext.Dishes.Where(d=>d.Id==id && d.IsDeleted==false).FirstAsync();
+
+            dish.TotalLikesCount+=1;
+
+            await this.dbContext.SaveChangesAsync();
+        }
+
         public async Task<bool> IsUserOwnerOfThisRecipeByIdAsync(int recipeId, string userId)
         {
             Dish dish=await this.dbContext.Dishes.FirstAsync(d=>d.Id==recipeId && d.IsDeleted == false);
@@ -208,6 +217,18 @@
                     Name=ud.Dish.Name,
                     Description=ud.Dish.Description,
                     ImageUrl=ud.Dish.ImageUrl
+                }).ToListAsync();
+        }
+
+        public async Task<IEnumerable<IndexViewModel>> TakeTopTenDishesAsync()
+        {
+            return await this.dbContext.Dishes.OrderByDescending(d => d.TotalLikesCount).Where(d=>d.IsDeleted==false).Take(10)
+                .Select(d => new IndexViewModel()
+                {
+                    Id = d.Id,
+                    Name = d.Name,
+                    Description = d.Description,
+                    ImageUrl = d.ImageUrl
                 }).ToListAsync();
         }
 
