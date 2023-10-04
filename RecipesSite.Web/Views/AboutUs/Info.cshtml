@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewData["Title"] = "Information";
+}
+<h1 class="text-center">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="container col-12 text-center">
+        <h2>Site Introduction</h2>
+        <p>
+            This is our simple web site, where you can share your recipes with other people. You can also see others peoples recipes and save them. You have functionality 
+            for liking recipes, which you find interesting. If you are not looking for specific recipe you can go to <a class="text-danger" asp-controller="Dish" asp-action="MostRated">Most Rated Recipes</a>
+            and see them. You have also section for recipes that you have shared in our site,which  you can access <a class="text-danger" asp-controller="Dish" asp-action="MyAdded">here</a>.
+        </p>
+    </div>
+</div>
