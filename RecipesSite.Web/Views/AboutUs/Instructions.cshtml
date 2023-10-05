@@ -1,1 +1,30 @@
-﻿
+﻿@{
+    ViewData["Title"] = "Instructions";
+}
+<h1 class="text-center">How To Add New Recipe?!</h1>
+
+<div class="container text-center">
+    <div class="container col-6 mb-4">
+        <h2>First Step</h2>
+        <p>
+            First thing you need to do is to go to page where you can add new recipes. You can access this page <a class="text-danger" asp-controller="Dish" asp-action="Add">here</a>.
+        </p>
+    </div>
+    <div class="container col-6 offset-6 mb-4">
+        <h2>Second Step</h2>
+        <p>
+            When you are in the page for adding new recipes you should start to fill up input fields. Fist you should type name of the recipe, then you should add description, the next step is 
+            to add image link.Then you should continue with ingredients(separeted by comma) and preparation steps. Next step is to set time(minutes) for preparation and select from drop-down menu
+            from which category is your dish.
+        </p>
+    </div>
+    <div class="container col-6 mb-4">
+        <h2>Third Step</h2>
+        <p>
+            Then push submit button and it is done. You can go and check your recipe and if you find some errors you can edit it, or in the worst case delete it.
+        </p>
+    </div>
+    <div class="container col-6">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQsiWX9w-bkFChh2dngwyxMjM4h6g_bAJ6zlA&usqp=CAU" class="img-fluid col-8 mt-4" alt="Form Picture">
+    </div>
+</div>
