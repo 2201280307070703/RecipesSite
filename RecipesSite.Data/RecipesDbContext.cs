@@ -27,6 +27,8 @@
 
             builder.ApplyConfiguration(new UsersDishesConfiguration());
 
+            builder.ApplyConfiguration(new ApplicationUserConfiguration());
+
             base.OnModelCreating(builder);
         }
     }

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace RecipesSite.Web.Controllers
+﻿namespace RecipesSite.Web.Controllers
 {
-    public class AboutUs : Controller
+    using Microsoft.AspNetCore.Mvc;
+
+    public class AboutUsController : Controller
     {
         public IActionResult Info()
         {

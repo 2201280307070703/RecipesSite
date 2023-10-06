@@ -24,5 +24,20 @@
             public const int PreparationStepsMinLength = 10;
             public const int PreparationStepsMaxLength = 400;
         }
+
+        public static class UserValidations
+        {
+            public const int FirstNameMinLength = 2;
+            public const int FirstNameMaxLength = 15;
+
+            public const int LastNameMinLength = 2;
+            public const int LastNameMaxLength = 20;
+
+            public const int PasswordMinLength = 6;
+            public const int PasswordMaxLength = 30;
+
+            public const int UserNameMinLength = 4;
+            public const int UserNameMaxLength = 40;
+        }
     }
 }
