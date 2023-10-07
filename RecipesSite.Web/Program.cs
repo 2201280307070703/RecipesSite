@@ -6,6 +6,8 @@ namespace RecipesSite.Web
     using Infrastructure.Extensions;
     using RecipeSite.Services.Contracts;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Identity;
+    using static Common.GeneralApplicationConstants;
 
     public class Program
     {
@@ -28,7 +30,9 @@ namespace RecipesSite.Web
                 options.Password.RequiredLength = builder.Configuration.GetValue<int>("Identity:Password:RequiredLength");
             }
             )
+                .AddRoles<IdentityRole<Guid>>()
                 .AddEntityFrameworkStores<RecipesDbContext>();
+
             builder.Services.AddControllersWithViews()
                 .AddMvcOptions(options =>
                 {
@@ -59,6 +63,11 @@ namespace RecipesSite.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            if (app.Environment.IsDevelopment())
+            {
+                app.SeedAdministrator(DevelopmentAdminEmail);
+            }
 
             app.MapDefaultControllerRoute();
             app.MapRazorPages();
