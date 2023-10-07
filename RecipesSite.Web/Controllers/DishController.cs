@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using RecipeSite.Services.Contracts;
+    using RecipesSite.Web.Infrastructure.Extensions;
     using RecipesSite.Web.viewModels.Dish;
     using static RecipesSite.Common.NotificationMessageConstants;
 
@@ -102,7 +103,7 @@
 
             bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
 
-            if (!isUserOwnerOfRecipe)
+            if (!isUserOwnerOfRecipe || !User.IsUserAdmin())
             {
                 this.TempData[ErrorMessage] = "This recipe is not yours and you can not delete it!";
                 return RedirectToAction("Dish", "MyAdded");
@@ -134,7 +135,7 @@
 
             bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
 
-            if (!isUserOwnerOfRecipe)
+            if (!isUserOwnerOfRecipe || !User.IsUserAdmin())
             {
                 this.TempData[ErrorMessage] = "This recipe is not yours and you can not delete it!";
                 return RedirectToAction("Dish", "MyAdded");
@@ -169,7 +170,7 @@
 
             bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
 
-            if (!isUserOwnerOfRecipe)
+            if (!isUserOwnerOfRecipe || !User.IsUserAdmin())
             {
                 this.TempData[ErrorMessage] = "This recipe is not yours and you can not edit it!";
                 return RedirectToAction("Dish", "MyAdded");
@@ -208,7 +209,7 @@
 
             bool isUserOwnerOfRecipe = await this.dishService.IsUserOwnerOfThisRecipeByIdAsync(id, GetId());
 
-            if (!isUserOwnerOfRecipe)
+            if (!isUserOwnerOfRecipe || !User.IsUserAdmin())
             {
                 this.TempData[ErrorMessage] = "This recipe is not yours and you can not edit it!";
                 return RedirectToAction("Dish", "MyAdded");
