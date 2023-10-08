@@ -1,1 +1,1 @@
-# RecipesSite
+This is my simple Recipe site for sharing recipes with other people. You can use this site without registration if you want just to look through all recipes or review recipes with highest rating, you can also like recipe (this increase recipe rating). You have access to AboutUs section and to Instructions how to add recipe. If you have account you can add recipes and delete them if you want and also you can modify recipes you have added, save recipes and like them. You can view your personal data and if you want you can change it.
