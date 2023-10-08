@@ -1,10 +1,13 @@
 ﻿namespace RecipesSite.Web.Controllers
 {
     using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.AspNetCore.Mvc;
+    using RecipeSite.Services.Contracts;
     using RecipesSite.Data.Models;
     using RecipesSite.Web.viewModels.User;
+    using System.Security.Claims;
     using static RecipesSite.Common.NotificationMessageConstants;
 
     public class UserController : Controller
@@ -12,10 +15,14 @@
         private readonly SignInManager<ApplicationUser> signInManager;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public UserController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
+        private readonly IUserService userService;
+
+        public UserController(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager, IUserService userService)
         {
             this.signInManager = signInManager;
             this.userManager = userManager;
+
+            this.userService = userService;
         }
 
         [HttpGet]
@@ -89,6 +96,49 @@
             }
 
             return Redirect(model.ReturnUrl ?? "/Home/Index");
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> PersonalData()
+        {
+            string? user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var model = await this.userService.GetUserPersonalDataByIdAsync(user);
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> EditInfo(string id)
+        {
+            var model= await this.userService.GetUserPersonalDataForEditByIdAsync(id);
+
+             return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> EditInfo(string id, UserChangeInfoFormModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            try
+            {
+                await this.userService.EditPersonalDataByIdAsync(id, model);
+                
+                return RedirectToAction("PersonalData", "User");
+            }
+            catch(Exception)
+            {
+                this.TempData[ErrorMessage] = "Unexpected error occured! Please try again later.";
+
+                return RedirectToAction("Index", "Home");
+            }
         }
     }
 }

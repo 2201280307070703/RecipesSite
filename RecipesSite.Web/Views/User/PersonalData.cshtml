@@ -1,0 +1,21 @@
+﻿@using RecipeSite.Services.Contracts
+@inject IUserService UserService
+@model UserPersonalDataViewModel
+
+@{
+    string? fullName = await this.UserService.GetFullNameByUsernameAsync(User.Identity!.Name!);
+}
+
+@{
+    ViewData["Title"] = "Your Personal Data";
+
+}
+
+<div class="card col-6 offset-3 bg-info">
+    <div class="card-body text-center">
+        <h3 class="card-title">Hello, @fullName</h3>
+        <h5 class="mb-3">Your username: @Model.UserName</h5>
+        <h5 class="mb-3">Your email: @Model.Email</h5>
+        <a asp-controller="User" asp-action="EditInfo" asp-route-id="@Model.Id" class="btn btn-danger">Edit</a>
+    </div>
+</div>
